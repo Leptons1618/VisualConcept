@@ -146,3 +146,4 @@ class SumOfFirstNNumbers(Scene):
         self.wait(1)
         self.play(FadeOut(*self.mobjects))
         self.play(Write(Text("Thank You!", font_size=36, color=BLUE)))
+        self.wait(2)
