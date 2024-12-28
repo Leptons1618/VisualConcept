@@ -109,11 +109,11 @@ class SumOfFirstNNumbers(Scene):
 
         # Base Case
         base_case_title = Text("Base Case:", font_size=24, color=GREEN).next_to(proof_title, DOWN).to_edge(LEFT)
-        base_case_equation = MathTex(r"S(1) = \frac{1(1+1)}{2}", font_size=24, color=WHITE).next_to(base_case_title, DOWN)
+        base_case_equation = MathTex(r"S(1) = \frac{1(1+1)}{2}", font_size=24, color=WHITE).next_to(base_case_title, DOWN).shift(RIGHT * 0.5)
         base_case_check = MathTex(r"\text{True for } n = 1", font_size=24, color=BLUE).next_to(base_case_equation, DOWN)
         
         steps = [
-            MathTex(r"= \frac{1 \times 2}{2}", font_size=24, color=WHITE).next_to(base_case_check, DOWN),
+            MathTex(r"= \frac{1 \times 2}{2}", font_size=24, color=WHITE).next_to(base_case_equation, RIGHT),
             MathTex(r"= 1", font_size=24, color=BLUE)
         ]
         
@@ -123,15 +123,18 @@ class SumOfFirstNNumbers(Scene):
         self.wait(0.5)
 
         for i, step in enumerate(steps):
-            self.play(Transform(base_case_equation.copy(), step.next_to(base_case_check, DOWN), replace_mobject_with_target_in_scene=True))
+            if i == 0:
+                self.play(Transform(base_case_equation.copy(), step, replace_mobject_with_target_in_scene=True))
+            else:
+                self.play(Transform(steps[i-1].copy(), step.next_to(steps[i-1], RIGHT), replace_mobject_with_target_in_scene=True))
             self.wait(0.5)
         self.play(Write(base_case_check))
         self.wait(1)
 
         # Inductive Hypothesis
-        to_prove = Text("Inductive Hypothesis:", font_size=24, color=GREEN).next_to(base_case_check, DOWN).align_to(base_case_title, LEFT)
-        inductive_hypothesis = MathTex(r"S(k) = \frac{k(k+1)}{2}", font_size=24, color=WHITE).next_to(to_prove, DOWN)
-        inductive_hypothesis_check = MathTex(r"\text{Assume true for } n = k", font_size=24, color=BLUE).next_to(inductive_hypothesis, DOWN)
+        to_prove = Text("Inductive Hypothesis:", font_size=24, color=GREEN).next_to(base_case_check, DOWN).to_edge(LEFT)
+        inductive_hypothesis = MathTex(r"S(k) = \frac{k(k+1)}{2}", font_size=24, color=WHITE).next_to(to_prove, DOWN).align_to(base_case_equation, LEFT)
+        inductive_hypothesis_check = MathTex(r"\text{Assume true for } n = k", font_size=24, color=BLUE).next_to(inductive_hypothesis, DOWN).align_to(base_case_check, LEFT)
         
         self.play(Write(to_prove))
         self.wait(0.5)
@@ -142,39 +145,38 @@ class SumOfFirstNNumbers(Scene):
 
         # Proof
         proof_title_1 = Text("Proof:", font_size=24, color=GREEN).next_to(inductive_hypothesis_check, DOWN).align_to(base_case_title, LEFT)
-        proof_text = Text("We need to prove that the formula holds for n = k + 1", font_size=20, color=WHITE).next_to(proof_title_1, DOWN)
+        text = Text("We need to prove that the formula holds for n = k + 1", font_size=18, color=WHITE, t2c={"n = k + 1": RED}).next_to(proof_title_1, DOWN).align_to(proof_title_1, LEFT).shift(RIGHT * 0.5)
         
         proof_texts = [
             MathTex(r"S(k+1) = \frac{(k+1)(k+1+1)}{2}", font_size=20, color=WHITE),
             MathTex(r"S(k+1) = \frac{(k+1)(k+2)}{2}", font_size=20, color=WHITE),
-            MathTex(r"S(k+1) = \frac{k^2 + 3k + 2}{2}", font_size=20, color=WHITE),
-            MathTex(r"S(k+1) = \frac{k^2 + 2k + k + 2}{2}", font_size=20, color=WHITE),
-            MathTex(r"S(k+1) = \frac{k(k+1)}{2} + k + 1", font_size=20, color=WHITE),
-            MathTex(r"S(k+1) = S(k) + k + 1", font_size=20, color=WHITE),
-            MathTex(r"S(k+1) = \frac{k(k+1)}{2} + k + 1", font_size=20, color=WHITE),
-            MathTex(r"S(k+1) = S(k) + k + 1", font_size=20, color=WHITE),
+            MathTex(r"= \frac{k^2 + 3k + 2}{2}", font_size=20, color=WHITE),
+            MathTex(r"= \frac{k^2 + 2k + k + 2}{2}", font_size=20, color=WHITE),
+            MathTex(r"= \frac{k(k+1)}{2} + k + 1", font_size=20, color=WHITE),
+            MathTex(r"= S(k) + k + 1", font_size=20, color=GREEN)
         ]
         
         self.play(Write(proof_title_1))
         self.wait(0.5)
-        self.play(Write(proof_text))
+        self.play(Write(text))
         self.wait(0.5)
-
-        # Use Transform after 3rd step to avoid text overflow
-        self.play(Transform(proof_text, proof_texts[0]))
+        
+        for i in range(len(proof_texts)):
+            if i == 0:
+                self.play(Write(proof_texts[i].next_to(text, DOWN).align_to(text, LEFT)))
+            elif i > 0 and i < 2:
+                self.play(Write(proof_texts[i].next_to(proof_texts[i-1], DOWN).align_to(proof_texts[i-1], LEFT)))
+            else:
+                self.play(Transform(proof_texts[i-1].copy(), proof_texts[i].next_to(proof_texts[i-1], RIGHT), replace_mobject_with_target_in_scene=True))
+            self.wait(0.25)
+            
+        # Highlight the result
+        self.play(Indicate(proof_texts[-1], color=GREEN, scale_factor=1.1))
         self.wait(1)
-        self.play(Transform(proof_text, proof_texts[1]))
-        self.wait(1)
-        self.play(Transform(proof_text, proof_texts[2]))
-        self.wait(1)
-
-        # Continue the rest with Transform
-        for i in range(3, len(proof_texts)):
-            self.play(Transform(proof_text, proof_texts[i]))
-            self.wait(1)
+        
 
         # Conclusion
-        conclusion = Text("Therefore, the formula holds for all natural numbers.", font_size=20, color=GREEN, weight=BOLD).next_to(proof_texts[-1], DOWN)
+        conclusion = Text("Therefore, the formula holds for all Natural Numbers.", font_size=20, color=GREEN, weight=BOLD, t2c={"Natural Numbers": YELLOW}).next_to(proof_texts[-1], DOWN * 2).align_to(proof_title_1, LEFT).shift(RIGHT * 0.5)
         self.play(Write(conclusion))
         self.wait(1)
 
