@@ -145,7 +145,7 @@ class SumOfFirstNNumbers(Scene):
 
         # Proof
         proof_title_1 = Text("Proof:", font_size=24, color=GREEN).next_to(inductive_hypothesis_check, DOWN).align_to(base_case_title, LEFT)
-        text = Text("We need to prove that the formula holds for n = k + 1.", font_size=18, color=WHITE, t2c={"n = k + 1": RED}).next_to(proof_title_1, DOWN).align_to(proof_title_1, LEFT).shift(RIGHT * 0.5)
+        text = Text("We need to prove that the formula holds for n = k + 1.", font_size=16, color=WHITE, t2c={"n = k + 1": RED}).next_to(proof_title_1, DOWN).align_to(proof_title_1, LEFT).shift(RIGHT * 0.5)
         
         proof_texts = [
             MathTex(r"S(k+1) = \frac{(k+1)(k+1+1)}{2}", font_size=20, color=WHITE),
@@ -176,7 +176,7 @@ class SumOfFirstNNumbers(Scene):
         
 
         # Conclusion
-        conclusion = Text("Therefore, the formula holds for all Natural Numbers.", font_size=20, color=GREEN, weight=BOLD, t2c={"Natural Numbers": YELLOW}).next_to(proof_texts[-1], DOWN * 2).align_to(proof_title_1, LEFT).shift(RIGHT * 0.5)
+        conclusion = Text("Therefore, the formula holds for all Natural Numbers.", font_size=20, color=BLUE, weight=BOLD, t2c={"Natural Numbers": GREEN}).next_to(proof_texts[-1], DOWN * 2).align_to(proof_title_1, LEFT).shift(RIGHT * 0.5)
         self.play(Write(conclusion))
         self.wait(1)
 
@@ -211,16 +211,23 @@ class SumOfFirstNNumbers(Scene):
         self.wait(1)
 
         # Explanation
-        explanation = Text("Let's understand this with some examples.", font_size=28, color=GREEN)
+        explanation = Text("Let's understand this with some examples.", font_size=32, color=GREEN)
         self.play(*[FadeOut(mobj) for mobj in self.mobjects])
-        self.play(Write(explanation.to_edge(UP)))
+        self.play(Write(explanation))
         self.wait(1)
         self.play(FadeOut(explanation))
 
         self.create_sum_animation(5)
         self.wait(1)
-        self.proof()
+        self.play(Write(Text("Let's see another example.", font_size=28, color=GREEN)))
         self.wait(1)
+        self.play(FadeOut(*self.mobjects))
+        self.create_sum_animation(10)
+        self.wait(1)
+        self.play(Write(Text("Let's see the proof of this formula.", font_size=28, color=GREEN)))
+        self.wait(1)
+        self.play(FadeOut(*self.mobjects))
+        self.proof()
         self.play(FadeOut(*self.mobjects))
         self.play(Write(Text("Thank You!", font_size=36, color=BLUE)))
         self.wait(2)
